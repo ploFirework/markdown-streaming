@@ -90,14 +90,14 @@ function isCompleteMarkdown(text: string): boolean {
     else if (char === '*' && prevChar !== '*' && nextChar !== '*') {
       unclosedItalic = 1 - unclosedItalic
     }
-    // Inline code `
-    else if (char === '`' && lastLine.substring(i, i + 3) !== '```') {
-      unclosedCode = 1 - unclosedCode
-    }
-    // Code block ```
+    // Code block ``` (check this before inline code)
     else if (lastLine.substring(i, i + 3) === '```') {
       unclosedCodeBlock = !unclosedCodeBlock
       i += 2 // Skip next 2 chars
+    }
+    // Inline code ` (only if not inside a code block)
+    else if (char === '`' && !unclosedCodeBlock) {
+      unclosedCode = 1 - unclosedCode
     }
     // Link [
     else if (char === '[' && prevChar !== '!') {
@@ -125,14 +125,21 @@ function isCompleteMarkdown(text: string): boolean {
   
   const hasIncompleteLine = incompleteLineEndings.some(pattern => pattern.test(lastLine))
   
-  // Text is complete if there are no unclosed tags
+  // Check if line ends with incomplete backticks (1 or 2 backticks without content)
+  const backtickMatch = lastLine.match(/`+$/);
+  const endsWithIncompleteBackticks = backtickMatch && 
+    backtickMatch[0].length > 0 && 
+    backtickMatch[0].length < 3;
+  
+  // Text is complete if there are no unclosed tags and no incomplete patterns
   return unclosedBold === 0 && 
          unclosedItalic === 0 && 
          unclosedCode === 0 && 
          unclosedLink === 0 && 
          unclosedImage === 0 && 
          !unclosedCodeBlock && 
-         !hasIncompleteLine
+         !hasIncompleteLine &&
+         !endsWithIncompleteBackticks
 }
 
 function MarkdownStreaming() {
