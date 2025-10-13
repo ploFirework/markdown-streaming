@@ -17,11 +17,11 @@ The key is to **postpone rendering** of incomplete markdown tags until they are 
 
 ### Features
 
-1. Tables
-2. **Bold text** and *italic text*
-3. Lists (both ordered and unordered)
-4. Code blocks with syntax highlighting
-5. Links and images
+1. **Bold text** and *italic text*
+2. Lists (both ordered and unordered)
+3. Code blocks with syntax highlighting
+4. Links and images
+5. Tables
 
 #### Example Code Block
 
@@ -74,6 +74,7 @@ function isCompleteMarkdown(text: string): boolean {
   let unclosedLink = 0
   let unclosedImage = 0
   let unclosedCodeBlock = false
+  let inLinkUrl = false  // Track if we're inside the URL part of a link
   
   // Track state through the line
   for (let i = 0; i < lastLine.length; i++) {
@@ -109,8 +110,22 @@ function isCompleteMarkdown(text: string): boolean {
     }
     // Closing ]
     else if (char === ']') {
-      if (unclosedLink > 0) unclosedLink--
-      if (unclosedImage > 0) unclosedImage--
+      if (unclosedLink > 0) {
+        if (nextChar === '(') {
+          inLinkUrl = true
+          unclosedLink--
+          i++ // Skip the opening (
+        }
+        // If nextChar is NOT (, the link is incomplete (just [text] without (url))
+        // Don't decrement unclosedLink, keep it as 1
+      }
+      if (unclosedImage > 0) {
+        unclosedImage--
+      }
+    }
+    // Closing ) - check if we're inside a link URL
+    else if (char === ')' && inLinkUrl) {
+      inLinkUrl = false
     }
   }
   
@@ -131,15 +146,18 @@ function isCompleteMarkdown(text: string): boolean {
     backtickMatch[0].length > 0 && 
     backtickMatch[0].length < 3;
   
-  // Text is complete if there are no unclosed tags and no incomplete patterns
-  return unclosedBold === 0 && 
+  const isComplete = unclosedBold === 0 && 
          unclosedItalic === 0 && 
          unclosedCode === 0 && 
          unclosedLink === 0 && 
          unclosedImage === 0 && 
          !unclosedCodeBlock && 
          !hasIncompleteLine &&
-         !endsWithIncompleteBackticks
+         !endsWithIncompleteBackticks &&
+         !inLinkUrl
+  
+  // Text is complete if there are no unclosed tags and no incomplete patterns
+  return isComplete
 }
 
 function MarkdownStreaming() {
