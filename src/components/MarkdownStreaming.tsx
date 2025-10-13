@@ -17,11 +17,11 @@ The key is to **postpone rendering** of incomplete markdown tags until they are 
 
 ### Features
 
-1. **Bold text** and *italic text*
-2. Lists (both ordered and unordered)
-3. Code blocks with syntax highlighting
-4. Links and images
-5. Tables
+1. Tables
+2. **Bold text** and *italic text*
+3. Lists (both ordered and unordered)
+4. Code blocks with syntax highlighting
+5. Links and images
 
 #### Example Code Block
 
@@ -118,7 +118,8 @@ function isCompleteMarkdown(text: string): boolean {
   const incompleteLineEndings = [
     />\s*$/,                // Incomplete blockquote
     /^\s*[-*+]\s*$/,        // Incomplete list item
-    /^\s*\d+\.\s*$/,        // Incomplete ordered list
+    /^\s*\d+\.\s*$/,        // Incomplete ordered list (with period)
+    /^\s*\d+\s*$/,          // Incomplete ordered list (just number)
     /^#{1,6}\s*$/,          // Header with no text
   ]
   
@@ -145,7 +146,6 @@ function MarkdownStreaming() {
     setDisplayedText('')
     
     let currentIndex = 0
-    let previousText = ''
     
     const interval = setInterval(() => {
       if (currentIndex < TEST_MARKDOWN.length) {
@@ -155,15 +155,11 @@ function MarkdownStreaming() {
         // Update if:
         // 1. The current text is complete (no incomplete tags at the end)
         // 2. We're at the end of the text
-        // 3. The previous text was incomplete but the current text is complete (tag just finished)
-        const wasIncomplete = !isCompleteMarkdown(previousText)
         const isComplete = isCompleteMarkdown(text)
         
         if (isComplete || currentIndex === TEST_MARKDOWN.length) {
           setDisplayedText(text)
         }
-        
-        previousText = text
       } else {
         // Make sure we display the final text
         setDisplayedText(TEST_MARKDOWN)
