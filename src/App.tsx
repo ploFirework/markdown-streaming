@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import MarkdownStreaming from './components/MarkdownStreaming'
 import './App.css'
 

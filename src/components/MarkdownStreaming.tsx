@@ -178,8 +178,8 @@ function MarkdownStreaming() {
   const [displayedText, setDisplayedText] = useState('')
   const [isStreaming, setIsStreaming] = useState(false)
   const [streamSpeed, setStreamSpeed] = useState(50) // milliseconds per character
-  const [streamMode, setStreamMode] = useState<StreamMode>('mock')
-  const [prompt, setPrompt] = useState('Create a detailed product page in markdown format for a sample tech product. Include: 1) A product title and description with multiple headings (H2, H3) and bullet points, 2) A feature comparison table with at least 4 rows and 3 columns, 3) At least 3 markdown image links (use placeholder URLs like https://via.placeholder.com/600x400), 4) At least 2 video embeds or links (use placeholder URLs), 5) A user reviews section with at least 5 reviews, each including a star rating (use emoji stars ⭐), customer name, review text, and date. Make it comprehensive and well-formatted.')
+  const [streamMode, setStreamMode] = useState<StreamMode>('api')
+  const [prompt, setPrompt] = useState('Create a detailed product page in markdown format for a sample tech product. Include: 1) A product title and description with multiple headings (H2, H3) and bullet points, 2) A feature comparison table with at least 4 rows and 3 columns, 3) At least 3 markdown image links (use real test image APIs for 600x400 images), 4) At least 2 video embeds or links (again use real test video APIs), 5) A user reviews section with at least 5 reviews, each including a star rating (use emoji stars ⭐), customer name, review text, and date. Make it comprehensive and well-formatted.')
   const [error, setError] = useState<string | null>(null)
   
   // Refs to track streaming state for cancellation
