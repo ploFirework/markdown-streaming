@@ -35,6 +35,12 @@ yarn install
 pnpm install
 ```
 
+### .env
+Add the following key:
+```
+VITE_OPENAI_API_KEY=your_api_key_here
+```
+
 ### Development
 
 ```bash

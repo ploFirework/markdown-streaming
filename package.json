@@ -10,9 +10,10 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
+    "marked": "^9.1.6",
+    "openai": "^6.9.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "marked": "^9.1.6"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",
